@@ -1,0 +1,14 @@
+{application, etbx,
+ [
+  {description, ""},
+  {vsn, "1.0.0"},
+  {modules, [etbx]},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { etbx_app, []}},
+  {env, []}
+ ]}.
+
