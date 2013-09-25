@@ -4,6 +4,7 @@
 -module(etbx).
 -vsn("1.0.0").
 -export([get_env/1, get_env/2]).
+-export([is_nil/0, is_nil/1]).
 -export([maybe_apply/3, maybe_apply/4]).
 -export([set_loglevel/1]).
 -export([start_app/1]).
@@ -80,4 +81,12 @@ stop_app({ok, _, Apps}) ->
 stop_app(Apps) ->
     stop_apps(Apps).
 
-
+%% @doc a common sense test for what one would expect should be a 
+%% "nil" value. Seriously Ericsson. 
+-spec is_nil(any())  -> boolean().
+is_nil(undefined) -> true;
+is_nil([])        -> true;
+is_nil({})        -> true;
+is_nil(<<>>)      -> true;
+is_nil(_)         -> false.
+is_nil()          -> true.
