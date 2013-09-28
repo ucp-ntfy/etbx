@@ -4,6 +4,7 @@
 -module(etbx).
 -vsn("1.0.0").
 -export([get_env/1, get_env/2]).
+-export([index_of/2]).
 -export([is_nil/0, is_nil/1]).
 -export([maybe_apply/3, maybe_apply/4]).
 -export([set_loglevel/1]).
@@ -92,10 +93,37 @@ is_nil(<<>>)      -> true;
 is_nil(_)         -> false.
 is_nil()          -> true.
 
--type recspec()::list().
+-type recspec()::tuple().
 -type proplist()::list(tuple()).
 
+%% @private
+index_of(_, [], _) -> undefined;
+index_of(X, [H | T], I) ->
+    if H =:= X -> I;
+       true    -> index_of(X, T, I+1)
+    end.
+
+%% @doc returns the index for the first occurrence of an element in a list
+%% or undefined if the element is not in the list
+-spec index_of(any(), list()) -> number() | undefined.            
+index_of(X, L) ->
+    index_of(X, L, 0).
 %% @doc converts a property list into a record.
 -spec to_rec(recspec(), proplist()) -> record().
-to_rec([R|L], P) ->
-    list_to_tuple([R | [proplists:get_value(X,P) || X <- L]]).
+to_rec({R, [_ | N], Spec}, P) when is_atom(R) and is_list(Spec) ->
+    list_to_tuple(
+      [R | lists:foldl(
+             fun ({K,V}, A) ->
+                     case index_of(K, Spec) of
+                         undefined -> 
+                             A;
+                         I -> 
+                             {Head, Tail} = lists:split(I, A),
+                             Rest = case Tail of
+                                        [_ | M] -> M;
+                                        []      -> []
+                                    end,
+                             Head ++ [V | Rest]
+                     end
+             end, N, P)]).
+
