@@ -9,6 +9,7 @@
 -export([set_loglevel/1]).
 -export([start_app/1]).
 -export([stop_app/1]).
+-export([to_rec/2]).
 
 %% @doc Retrieves an Application env setting
 -spec get_env(atom()) -> any().
@@ -75,7 +76,7 @@ start_app(App) ->
 
 %% @doc Stops an application and all its dependencies. The start token
 %% that needs to be provided here is the one returned by start_app()
--spec stop_app({ok, atom(), list()}) -> ok | any().
+-spec(stop_app/1 :: ({ok, atom(), list()} | [string()]) -> ok | any()).
 stop_app({ok, _, Apps}) ->
     stop_apps(Apps);
 stop_app(Apps) ->
@@ -90,3 +91,11 @@ is_nil({})        -> true;
 is_nil(<<>>)      -> true;
 is_nil(_)         -> false.
 is_nil()          -> true.
+
+-type recspec()::list().
+-type proplist()::list(tuple()).
+
+%% @doc converts a property list into a record.
+-spec to_rec(recspec(), proplist()) -> record().
+to_rec([R|L], P) ->
+    list_to_tuple([R | [proplists:get_value(X,P) || X <- L]]).
