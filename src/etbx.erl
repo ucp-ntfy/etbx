@@ -3,10 +3,12 @@
 
 -module(etbx).
 -vsn("1.0.0").
+-export([contains/2]).
 -export([get_env/1, get_env/2]).
 -export([index_of/2]).
 -export([is_nil/0, is_nil/1]).
 -export([maybe_apply/3, maybe_apply/4]).
+-export([replace/3]).
 -export([set_loglevel/1]).
 -export([start_app/1]).
 -export([stop_app/1]).
@@ -127,3 +129,21 @@ to_rec({R, [_ | N], Spec}, P) when is_atom(R) and is_list(Spec) ->
                      end
              end, N, P)]).
 
+%% @doc Tests if X is present in the given list.
+-spec contains(any(), list()) -> boolean().
+contains(_, []) -> false;
+contains(X, [{K,_} | T]) ->
+    if X =:= K -> true;
+       true    -> contains(X, T)
+    end;
+contains(X, [H | T]) ->
+    if X =:= H -> true;
+       true    -> contains(X, T)
+    end.
+
+%% @doc replace property K with value V in proplist L
+-spec replace(any(), any(), proplist()) -> proplist().
+replace(K, V, []) ->
+    [{K,V}];
+replace(K, V, [{_,_}|_] = L) ->
+    [{K, V} | proplists:delete(K, L)].
