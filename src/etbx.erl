@@ -8,7 +8,7 @@
 -export([index_of/2]).
 -export([is_nil/0, is_nil/1]).
 -export([maybe_apply/3, maybe_apply/4]).
--export([replace/3]).
+-export([update/3]).
 -export([set_loglevel/1]).
 -export([start_app/1]).
 -export([stop_app/1]).
@@ -141,9 +141,9 @@ contains(X, [H | T]) ->
        true    -> contains(X, T)
     end.
 
-%% @doc replace property K with value V in proplist L
--spec replace(any(), any(), proplist()) -> proplist().
-replace(K, V, []) ->
+%% @doc update property K with value V in proplist L
+-spec update(any(), any(), proplist()) -> proplist().
+update(K, V, []) ->
     [{K,V}];
-replace(K, V, [{_,_}|_] = L) ->
+update(K, V, [{_,_}|_] = L) ->
     [{K, V} | proplists:delete(K, L)].

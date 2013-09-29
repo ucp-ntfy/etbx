@@ -52,12 +52,12 @@ contains_test_() ->
      ?_assertNot(etbx:contains(foo, [{}])),
      ?_assertNot(etbx:contains(foo, [{bar, "bar"}, {baz, "baz"}]))].
 
-replace_test_() ->
-    [?_assertEqual(etbx:replace(foo, "foo", [{foo, ""}, {bar, "bar"}]),
+update_test_() ->
+    [?_assertEqual(etbx:update(foo, "foo", [{foo, ""}, {bar, "bar"}]),
                    [{foo, "foo"}, {bar, "bar"}]),
-     ?_assertEqual(etbx:replace(foo, "foo", []),
+     ?_assertEqual(etbx:update(foo, "foo", []),
                    [{foo, "foo"}]),
-     ?_assertEqual(etbx:replace(foo, "foo", [{bar, "bar"}]),
+     ?_assertEqual(etbx:update(foo, "foo", [{bar, "bar"}]),
                    [{foo, "foo"}, {bar, "bar"}])].
      
 
