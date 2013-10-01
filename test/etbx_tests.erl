@@ -60,4 +60,34 @@ update_test_() ->
      ?_assertEqual(etbx:update(foo, "foo", [{bar, "bar"}]),
                    [{foo, "foo"}, {bar, "bar"}])].
      
+to_list_test_() ->
+    [?_assertEqual(etbx:to_list(<<"foo">>),       "foo"),
+     ?_assertEqual(etbx:to_list({foo, bar, baz}), [foo, bar, baz]),
+     ?_assertEqual(etbx:to_list(42),              [42]),
+     ?_assertEqual(etbx:to_list("foo"),           "foo"),
+     ?_assertEqual(etbx:to_list(foo),             "foo")].
 
+to_string_test_() ->
+    [?_assertEqual(etbx:to_string(<<"foo">>), "foo"),
+     ?_assertEqual(etbx:to_string(42),        "42"),
+     ?_assertEqual(etbx:to_string(2.7183),    "2.71830000000000016058e+00"),
+     ?_assertEqual(etbx:to_string("foo"),     "foo"),
+     ?_assertEqual(etbx:to_string(foo),       "foo")].
+
+to_binary_test_() ->
+    [?_assertEqual(etbx:to_binary("foo"),     <<"foo">>),
+     ?_assertEqual(etbx:to_binary(42),        <<42>>),
+     ?_assertEqual(etbx:to_binary(foo),       <<"foo">>),
+     ?_assertEqual(etbx:to_binary(<<"foo">>), <<"foo">>)].
+
+to_atom_test_() ->
+    [?_assertError(badarg, etbx:to_atom(42)),
+     ?_assertError(badarg, etbx:to_atom(2.7183)),
+     ?_assertError(badarg, etbx:to_atom("nofoo")),
+     ?_assertError(badarg, etbx:to_atom(<<"tidakfoo">>)),
+     ?_assertEqual(etbx:to_atom(foo),                  foo),
+     ?_assertEqual(etbx:to_atom("hasfoo",     unsafe), hasfoo),
+     ?_assertEqual(etbx:to_atom(<<"adafoo">>, unsafe), adafoo),
+     ?_assertEqual(etbx:to_atom(24,           unsafe), '24'),
+     ?_assertEqual(etbx:to_atom(1.618,        unsafe),
+                   '1.61800000000000010481e+00')].

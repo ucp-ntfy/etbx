@@ -12,7 +12,11 @@
 -export([set_loglevel/1]).
 -export([start_app/1]).
 -export([stop_app/1]).
+-export([to_atom/1, to_atom/2]).
+-export([to_binary/1]).
+-export([to_list/1]).
 -export([to_rec/2]).
+-export([to_string/1]).
 
 %% @doc Retrieves an Application env setting
 -spec get_env(atom()) -> any().
@@ -147,3 +151,57 @@ update(K, V, []) ->
     [{K,V}];
 update(K, V, [{_,_}|_] = L) ->
     [{K, V} | proplists:delete(K, L)].
+
+to_list(X) when is_binary(X) ->
+    binary_to_list(X);
+to_list(X) when is_tuple(X) ->
+    tuple_to_list(X);
+to_list(X) when is_number(X) ->
+    [X];
+to_list(X) when is_atom(X) ->
+    atom_to_list(X);
+to_list(X) when is_list(X) ->
+    X.
+to_string(X) when is_integer(X) ->
+    integer_to_list(X);
+to_string(X) when is_float(X) ->
+    float_to_list(X);
+to_string(X) when is_binary(X) ->
+    binary_to_list(X);
+to_string(X) when is_atom(X) ->
+    atom_to_list(X);
+to_string(X) when is_list(X) ->
+    X.
+to_binary(X) when is_list(X) ->
+    list_to_binary(X);
+to_binary(X) when is_integer(X) ->
+    <<X>>;
+to_binary(X) when is_atom(X) ->
+    atom_to_binary(X, latin1);
+to_binary(X) when is_binary(X) ->
+    X.
+to_atom(X) when is_list(X) ->
+    list_to_existing_atom(X);
+to_atom(X) when is_binary(X) ->
+    binary_to_existing_atom(X, latin1);
+to_atom(X) when is_number(X) ->
+    to_atom(to_string(X));
+to_atom(X) when is_atom(X) ->
+    X.
+to_atom(X, unsafe) when is_list(X) ->
+    list_to_atom(X);
+to_atom(X, unsafe) when is_binary(X) ->
+    binary_to_atom(X, latin1);
+to_atom(X, unsafe) when is_number(X) ->
+    to_atom(to_string(X), unsafe);
+to_atom(X, unsafe) when is_atom(X) ->
+    X.
+
+
+
+
+
+
+
+
+    
