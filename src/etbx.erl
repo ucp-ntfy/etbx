@@ -9,6 +9,7 @@
 -export([is_nil/0, is_nil/1]).
 -export([maybe_apply/3, maybe_apply/4]).
 -export([update/3]).
+-export([run/1]).
 -export([set_loglevel/1]).
 -export([start_app/1]).
 -export([stop_app/1]).
@@ -152,12 +153,16 @@ update(K, V, []) ->
 update(K, V, [{_,_}|_] = L) ->
     [{K, V} | proplists:delete(K, L)].
 
+%%%=========================================================================
+%%% Type conversion
+%%%=========================================================================
+
 to_list(X) when is_binary(X) ->
     binary_to_list(X);
 to_list(X) when is_tuple(X) ->
     tuple_to_list(X);
 to_list(X) when is_number(X) ->
-    [X];
+    to_string(X);
 to_list(X) when is_atom(X) ->
     atom_to_list(X);
 to_list(X) when is_list(X) ->
@@ -197,11 +202,25 @@ to_atom(X, unsafe) when is_number(X) ->
 to_atom(X, unsafe) when is_atom(X) ->
     X.
 
+%%%=========================================================================
+%%% Running Shell Commands
+%%%=========================================================================
 
+run(Cmd) ->
+    run(Cmd, 5000).
 
+run(Cmd, Timeout) ->
+    Port = open_port({spawn, Cmd}, [exit_status]),
+    run(Port, <<>>, Timeout).
 
-
-
-
-
-    
+run(Port, Data, Timeout) ->
+    receive {Port, {data, NewData}}  -> 
+            NewBin = to_binary(NewData),
+            run(Port, <<Data/binary,NewBin/binary>>, Timeout);
+            {Port, {exit_status, 0}} -> Data;
+            {Port, {exit_status, S}} -> throw({error, S})
+    after Timeout 
+              -> throw(timeout)
+    end.
+            
+            

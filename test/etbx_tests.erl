@@ -63,7 +63,7 @@ update_test_() ->
 to_list_test_() ->
     [?_assertEqual(etbx:to_list(<<"foo">>),       "foo"),
      ?_assertEqual(etbx:to_list({foo, bar, baz}), [foo, bar, baz]),
-     ?_assertEqual(etbx:to_list(42),              [42]),
+     ?_assertEqual(etbx:to_list(42),              "42"),
      ?_assertEqual(etbx:to_list("foo"),           "foo"),
      ?_assertEqual(etbx:to_list(foo),             "foo")].
 
