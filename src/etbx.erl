@@ -215,9 +215,9 @@ run(Cmd, Timeout) ->
 
 run(Port, Data, Timeout) ->
     receive {Port, {data, NewData}}  -> 
-            NewBin = to_binary(NewData),
-            run(Port, <<Data/binary,NewBin/binary>>, Timeout);
-            {Port, {exit_status, 0}} -> Data;
+                NewBin = to_binary(NewData),
+                run(Port, <<Data/binary,NewBin/binary>>, Timeout);
+            {Port, {exit_status, 0}} -> {ok, Data};
             {Port, {exit_status, S}} -> throw({error, S})
     after Timeout 
               -> throw(timeout)
