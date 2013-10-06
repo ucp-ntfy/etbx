@@ -9,7 +9,7 @@
 -export([is_nil/0, is_nil/1]).
 -export([maybe_apply/3, maybe_apply/4]).
 -export([update/3]).
--export([run/1]).
+-export([run/1, run/2]).
 -export([set_loglevel/1]).
 -export([start_app/1]).
 -export([stop_app/1]).
