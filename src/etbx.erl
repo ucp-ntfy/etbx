@@ -160,7 +160,12 @@ update(K, V, [{_,_}|_] = L) ->
 to_list(X) when is_binary(X) ->
     binary_to_list(X);
 to_list(X) when is_tuple(X) ->
-    tuple_to_list(X);
+    IsSet = sets:is_set(X),
+    if IsSet ->
+        sets:to_list(X);
+    true ->
+        tuple_to_list(X)
+    end; 
 to_list(X) when is_number(X) ->
     to_string(X);
 to_list(X) when is_atom(X) ->
