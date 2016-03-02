@@ -102,6 +102,7 @@ is_nil()          -> true.
 
 -type recspec()::tuple().
 -type proplist()::list(tuple()).
+-type record()::tuple(). 
 
 %% @private
 index_of(_, [], _) -> undefined;
@@ -116,6 +117,8 @@ index_of(X, [H | T], I) ->
 index_of(X, L) ->
     index_of(X, L, 0).
 %% @doc converts a property list into a record.
+
+-spec to_rec(recspec(), proplist()) -> record().
 to_rec({R, [_ | N], Spec}, P) when is_atom(R) and is_list(Spec) ->
     list_to_tuple(
       [R | lists:foldl(
