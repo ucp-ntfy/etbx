@@ -42,7 +42,7 @@ maybe_apply(Mod, Fun, Args) ->
 %% return the given Return parameter instead
 -spec maybe_apply(module(), function(), list(), any()) -> any().
 maybe_apply(Mod, Fun, Args, Return) ->
-    case catch apply(Mod, Fun, Args) of 
+    case catch apply(Mod, Fun, Args) of
         {'EXIT', {undef, _}} -> Return;
         Unknown -> Unknown
     end.
@@ -84,14 +84,14 @@ start_app(App) ->
 
 %% @doc Stops an application and all its dependencies. The start token
 %% that needs to be provided here is the one returned by start_app()
--spec(stop_app/1 :: ({ok, atom(), list()} | [string()]) -> ok | any()).
+-spec(stop_app({ok, atom(), list()} | [string()]) -> ok | any()).
 stop_app({ok, _, Apps}) ->
     stop_apps(Apps);
 stop_app(Apps) ->
     stop_apps(Apps).
 
-%% @doc a common sense test for what one would expect should be a 
-%% "nil" value. Seriously Ericsson. 
+%% @doc a common sense test for what one would expect should be a
+%% "nil" value. Seriously Ericsson.
 -spec is_nil(any())  -> boolean().
 is_nil(undefined) -> true;
 is_nil([])        -> true;
@@ -100,7 +100,6 @@ is_nil(<<>>)      -> true;
 is_nil(_)         -> false.
 is_nil()          -> true.
 
--type recspec()::tuple().
 -type proplist()::list(tuple()).
 
 %% @private
@@ -112,7 +111,7 @@ index_of(X, [H | T], I) ->
 
 %% @doc returns the index for the first occurrence of an element in a list
 %% or undefined if the element is not in the list
--spec index_of(any(), list()) -> number() | undefined.            
+-spec index_of(any(), list()) -> number() | undefined.
 index_of(X, L) ->
     index_of(X, L, 0).
 %% @doc converts a property list into a record.
@@ -122,9 +121,9 @@ to_rec({R, [_ | N], Spec}, P) when is_atom(R) and is_list(Spec) ->
       [R | lists:foldl(
              fun ({K,V}, A) ->
                      case index_of(K, Spec) of
-                         undefined -> 
+                         undefined ->
                              A;
-                         I -> 
+                         I ->
                              {Head, Tail} = lists:split(I, A),
                              Rest = case Tail of
                                         [_ | M] -> M;
@@ -165,7 +164,7 @@ to_list(X) when is_tuple(X) ->
         sets:to_list(X);
     true ->
         tuple_to_list(X)
-    end; 
+    end;
 to_list(X) when is_number(X) ->
     to_string(X);
 to_list(X) when is_atom(X) ->
@@ -219,13 +218,13 @@ run(Cmd, Timeout) ->
     run(Port, <<>>, Timeout).
 
 run(Port, Data, Timeout) ->
-    receive {Port, {data, NewData}}  -> 
+    receive {Port, {data, NewData}}  ->
                 NewBin = to_binary(NewData),
                 run(Port, <<Data/binary,NewBin/binary>>, Timeout);
             {Port, {exit_status, 0}} -> {ok, Data};
             {Port, {exit_status, S}} -> throw({error, S})
-    after Timeout 
+    after Timeout
               -> throw(timeout)
     end.
-            
-            
+
+
